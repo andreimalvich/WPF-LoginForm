@@ -1,0 +1,55 @@
+﻿<UserControl x:Class="WPF_LoginForm.CustomControls.LoadingSpinner"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WPF_LoginForm.CustomControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="50" d:DesignWidth="50">
+
+
+    <!-- Используем Viewbox, чтобы индикатор автоматически масштабировался 
+         под любой размер Width/Height, который вы укажете снаружи -->
+    <Viewbox>
+        <Grid Width="40" Height="40">
+            <!-- Круглая линия с затухающим градиентом -->
+            <Border BorderThickness="3" CornerRadius="20" RenderTransformOrigin="0.5,0.5">
+                <Border.BorderBrush>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <!-- Используем DynamicResource для цвета, чтобы подхватывать стили темы -->
+                        <GradientStop Color="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=Foreground.(SolidColorBrush.Color)}" Offset="0.0"/>
+                        <GradientStop Color="Transparent" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Border.BorderBrush>
+
+                <!-- Трансформация вращения -->
+                <Border.RenderTransform>
+                    <RotateTransform x:Name="SpinnerTransform" Angle="0"/>
+                </Border.RenderTransform>
+
+                <!-- Триггер запуска анимации при появлении контрола на экране -->
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Style.Triggers>
+                            <Trigger Property="Visibility" Value="Visible">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard x:Name="SpinnerStoryboard">
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="(Border.RenderTransform).(RotateTransform.Angle)"
+                                                             From="0" To="360" 
+                                                             Duration="0:0:1" 
+                                                             RepeatBehavior="Forever"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <StopStoryboard BeginStoryboardName="SpinnerStoryboard"/>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+            </Border>
+        </Grid>
+    </Viewbox>
+</UserControl>
