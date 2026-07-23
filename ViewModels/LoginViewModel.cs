@@ -8,9 +8,9 @@ using WPF_LoginForm.Data;
 
 namespace WPF_LoginForm.ViewModels;
 
-public partial class LoginViewModel : ObservableObject
+public partial class LoginViewModel(IDbContextFactory<EfCoreContext> contextFactory) : ObservableObject
 {
-    private readonly IDbContextFactory<EfCoreContext> _contextFactory;
+    private readonly IDbContextFactory<EfCoreContext> _contextFactory = contextFactory;
 
     // Событие успешного входа для App.xaml.cs
     public event Action? LoginSuccess;
@@ -33,12 +33,6 @@ public partial class LoginViewModel : ObservableObject
     private bool CanLogin => !string.IsNullOrWhiteSpace(Username) &&
                              Password != null && Password.Length > 0 &&
                              !IsBusy;
-
-    public LoginViewModel(IDbContextFactory<EfCoreContext> contextFactory)
-    {
-        _contextFactory = contextFactory;
-    }
-
 
     partial void OnUsernameChanged(string value) => LoginCommand.NotifyCanExecuteChanged();
     partial void OnPasswordChanged(SecureString? value) => LoginCommand.NotifyCanExecuteChanged();
@@ -89,26 +83,16 @@ public partial class LoginViewModel : ObservableObject
 
     private async Task<bool> AuthenticateUser(NetworkCredential credentials)
     {
-        using var context = await _contextFactory.CreateDbContextAsync();
-        string targetUsername = credentials.UserName;
-
-        // Ищем пользователя в БД
-        var user = await context.Users
-            .AsNoTracking()
-            .FirstOrDefaultAsync(u => u.Username == targetUsername);
-
-        if (user == null)
+        if (credentials == null || string.IsNullOrEmpty(credentials.UserName))
             return false;
 
-        // Извлекаем и сверяем пароль
-        string clearTextPassword = credentials.Password;
-        bool isValid = user.Password == clearTextPassword;
+        using var context = await _contextFactory.CreateDbContextAsync();
 
-        // Затираем временную строку в памяти
-        clearTextPassword = string.Empty;
+        string targetUsername = credentials.UserName;        
+        string targetPassword = credentials.Password;        
 
-        return isValid;
-
+        return await context.Users
+            .AnyAsync(u => u.Username == targetUsername && u.Password == targetPassword); 
     }
 
 

@@ -17,8 +17,8 @@ public partial class App : Application
         serviceCollection.AddDataLayerServices();
 
         serviceCollection.AddTransient<LoginViewModel>();
-        serviceCollection.AddTransient<MainViewModel>();
-        serviceCollection.AddTransient<LoginView>();
+        serviceCollection.AddTransient<MainViewModel>();        
+        serviceCollection.AddTransient<LoginView>();        
         serviceCollection.AddTransient<MainView>();
 
         serviceCollection.AddTransient<HomeViewModel>();
@@ -37,6 +37,7 @@ public partial class App : Application
         var loginView = Services.GetRequiredService<LoginView>();
         var loginViewModel = Services.GetRequiredService<LoginViewModel>();
         loginView.DataContext = loginViewModel;
+        
         loginViewModel.LoginSuccess += () =>
         {
             var mainView = Services.GetRequiredService<MainView>();

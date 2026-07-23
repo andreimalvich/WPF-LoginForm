@@ -26,9 +26,6 @@
        
     </Window.Resources>
 
-
-
-
     <Border CornerRadius="12">
         <Border.Background>
             <ImageBrush ImageSource="/Images/back-image.jpg"
@@ -257,7 +254,7 @@
 
                                 <StackPanel Orientation="Horizontal" Visibility="{Binding IsBusy, Converter={StaticResource StandardVisibilityConverter}}">
                                     <!-- Вызываем наш контрол прямо внутрь кнопки, сделав его поменьше -->
-                                    <controls:LoadingSpinner Width="16" Height="16" VerticalAlignment="Center"/>
+                                    <controls:LoadingSpinner Width="16" Height="16" VerticalAlignment="Center" />
                                     <TextBlock Text="Checking..." Margin="8,0,0,0" VerticalAlignment="Center"/>
                                 </StackPanel>
                                 
