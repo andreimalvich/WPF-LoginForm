@@ -16,18 +16,18 @@ public partial class LoginViewModel(IDbContextFactory<EfCoreContext> contextFact
     public event Action? LoginSuccess;
 
     [ObservableProperty]
-    private bool _isBusy;
+    public partial bool IsBusy { get; set; }
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(LoginCommand))]
-    private string _username = string.Empty;
+    public partial string Username { get; set; }  = string.Empty;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(LoginCommand))]
-    private SecureString? _password;    
+    public partial SecureString? Password { get; set; }
 
     [ObservableProperty]
-    private string _errorMessage = string.Empty;
+    public partial string ErrorMessage { get; set; } = string.Empty;
 
     // Кнопка станет активной, только если выполнены все требования к длине строк    
     private bool CanLogin => !string.IsNullOrWhiteSpace(Username) &&
